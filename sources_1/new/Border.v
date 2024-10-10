@@ -20,18 +20,20 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Border(
+module Border
+# ( parameter BORDER_X = 640,
+    parameter BORDER_Y = 480,
+    parameter BORDER_WIDTH = 8
+)
+(
     input [9:0] x,
     input [9:0] y,
     output reg on
     );
-    parameter BORDER_X = 640;
-    parameter BORDER_WIDTH = 8;
     
     parameter BORDER_LEFT_STOP = BORDER_WIDTH;
     parameter BORDER_RIGHT_START = BORDER_X - BORDER_WIDTH;
     
-    parameter BORDER_Y = 480;
     
     parameter BORDER_TOP_STOP = BORDER_WIDTH;
     parameter BORDER_BOTTOM_START = BORDER_Y - BORDER_WIDTH;

@@ -23,6 +23,10 @@ module Top(
 	input clk_100MHz,      // from Basys 3
 	input reset,
 	input [11:0] sw,       // 12 bits for color
+	input BTNR,
+	input BTNL,
+	input BTNB,
+	input BTNU,
 	output hsync, 
 	output vsync,
 	output [11:0] rgb      // 12 FPGA pins for RGB(4 per color)
@@ -43,18 +47,37 @@ module Top(
     wire border_on;
     wire pointer_on;
     
-    Pointer pointer(.x(x), .y(y), .on(pointer_on));
+    wire btnr;
+    Debounce deb0 (BTNR, btnr);
+    wire btnl;
+    Debounce deb1 (BTNL, btnl);
+    wire btnu;
+    Debounce deb2 (BTNU, btnu);
+    wire btnb;
+    Debounce deb3 (BTNB, btnb);
+    wire btnc;
+    Debounce deb4 (reset, btnc);
+    
+    Pointer pointer(
+        .x(x), 
+        .y(y), 
+        .on(pointer_on),
+        .clk(clk_100MHz),
+        .btnr(btnr),
+        .btnl(btnl),
+        .btnc(btnc),
+        .btnu(btnu),
+        .btnb(btnb)
+        );
 
     Border border(.x(x), .y(y), .on(border_on));
 
     // Instantiate VGA Controller
-    vga_controller vga_c(.clk_100MHz(clk_100MHz), .reset(reset), .hsync(hsync), .vsync(vsync),
+    vga_controller vga_c(.clk_100MHz(clk_100MHz), .reset(), .hsync(hsync), .vsync(vsync),
                          .video_on(video_on), .p_tick(), .x(x), .y(y));
     // RGB Buffer
-    always @(posedge clk_100MHz or posedge reset)
-    if (reset) begin
-       rgb_reg <= 0;
-    end else if (pointer_on) begin
+    always @(posedge clk_100MHz)
+    if (pointer_on) begin
         rgb_reg <= WHITE;
     end else if (border_on) begin
         rgb_reg <= RED;;
