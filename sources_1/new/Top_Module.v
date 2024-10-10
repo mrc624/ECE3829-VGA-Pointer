@@ -48,15 +48,15 @@ module Top(
     wire pointer_on;
     
     wire btnr;
-    Debounce deb0 (BTNR, btnr);
+    Debounce deb0 (BTNR, clk_100MHz, btnr);
     wire btnl;
-    Debounce deb1 (BTNL, btnl);
+    Debounce deb1 (BTNL, clk_100MHz, btnl);
     wire btnu;
-    Debounce deb2 (BTNU, btnu);
+    Debounce deb2 (BTNU, clk_100MHz, btnu);
     wire btnb;
-    Debounce deb3 (BTNB, btnb);
+    Debounce deb3 (BTNB, clk_100MHz, btnb);
     wire btnc;
-    Debounce deb4 (reset, btnc);
+    Debounce deb4 (reset, clk_100MHz, btnc);
     
     Pointer pointer(
         .x(x), 

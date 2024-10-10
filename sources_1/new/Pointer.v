@@ -95,11 +95,36 @@ endmodule
 
 module Debounce(
     input btn,
+    input TEN_MHZ_CLK,
     output reg debounced
     );
     
-    always @ (btn) begin
-        debounced <= btn;
+    slow_mid_clk U0 (TEN_MHZ_CLK, clk);
+    
+    always @ (posedge clk) begin
+        if (debounced != btn) begin
+            debounced = btn;
+        end
     end
     
+endmodule
+
+module slow_mid_clk(
+    input clk_in,
+    output reg clk_out
+    );
+
+reg [24:0] period_count = 0;
+always @ (posedge clk_in)
+    if (period_count!= 10000000)
+    begin
+        period_count<= period_count + 1;
+        clk_out <= 0; //clk_out gets 0.
+    end
+    else
+    begin
+        period_count <= 0;
+        clk_out <= 1;
+    end
+
 endmodule
